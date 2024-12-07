@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Data Entry Form</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <section class="hero">
+        <div class="container">
+            <h1 class="title">Registration Form</h1>
+        </div>
+    </section>
+
+    <form id="form" class="container" method="POST">
+        <div class="field">
+            <label class="label" for="client-name">Name</label>
+            <div class="control">
+                <input
+                    id="client-name"
+                    class="input"
+                    type="text"
+                    placeholder="Enter Your Name"
+                    name="Name"
+                    required
+                    autocomplete="name"
+                />
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="label" for="email">Email</label>
+            <div class="control">
+                <input
+                    id="email"
+                    class="input"
+                    type="email"
+                    placeholder=" Enter Your Email"
+                    name="Email"
+                    required
+                    autocomplete="email"
+                />
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="label" for="phone">Phone Number</label>
+            <div class="control">
+                <input
+                    id="phone"
+                    class="input"
+                    type="tel"
+                    placeholder="Enter Your Phone Number"
+                    name="Phone"
+                    required
+                    pattern="[0-9]{11}"
+                    title="Please enter a 11-digit phone number"
+                />
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="label">Gender</label>
+            <div class="control">
+                <label class="radio">
+                    <input type="radio" name="Gender" value="male" required /> Male
+                </label>
+                <label class="radio">
+                    <input type="radio" name="Gender" value="female" required /> Female
+                </label>
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="label">Payment Method</label>
+            <div class="control">
+                <label class="radio">
+                    <input type="radio" name="Payment" value="instapay" required /> InstaPay
+                </label>
+                <label class="radio">
+                    <input type="radio" name="Payment" value="vodafone-cash" required /> VodafoneCash
+                </label>
+            </div>
+        </div>
+
+        <div class="field field-grouped">
+            <button class="button is-primary" type="submit" id="submit-button">
+                Sign Up
+            </button>
+            <button class="button is-danger" type="button">
+                Cancel
+            </button>
+        </div>
+    </form>
+
+    <div id="message" style="display: none;"></div>
+
+    <script>
+        document.getElementById("form").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const message = document.getElementById("message");
+            const submitButton = document.getElementById("submit-button");
+
+            message.textContent = "Submitting..";
+            message.style.display = "block";
+            message.style.backgroundColor = "#581845";
+            message.style.color = "white";
+            submitButton.disabled = true;
+
+            var formData = new FormData(this);
+            var keyValuePairs = [];
+            for (var pair of formData.entries()) {
+                keyValuePairs.push(pair[0] + "=" + pair[1]);
+            }
+
+            var formDataString = keyValuePairs.join("&");
+
+            fetch(
+                "https://script.google.com/macros/s/AKfycbzmf3AUTkl1fnV2pcuwRFdPkSoOPkQYDJ2__P6OI02C8NDF3eFCac-86w1ojMiZV3E/exec",
+                {
+                    redirect: "follow",
+                    method: "POST",
+                    body: formDataString,
+                    headers: {
+                        "Content-Type": "text/plain;charset=utf-8",
+                    },
+                }
+            )
+            .then(function (response) {
+                if (response) {
+                    return response;
+                } else {
+                    throw new Error("Failed to submit the form.");
+                }
+            })
+            .then(function (data) {
+                message.textContent = "Data submitted successfully!";
+                message.style.backgroundColor = "#C70039";
+                message.style.color = "white";
+                submitButton.disabled = false;
+                document.getElementById("form").reset();
+
+                setTimeout(function () {
+                    message.textContent = "";
+                    message.style.display = "none";
+                }, 2600);
+            })
+            .catch(function (error) {
+                console.error(error);
+                message.textContent = "An error occurred while submitting the form.";
+                message.style.backgroundColor = "red";
+                message.style.color = "white";
+            });
+        });
+
+        // Cancel button event listener
+        document.querySelector('.button.is-danger').addEventListener('click', function() {
+            document.getElementById('form').reset();
+        });
+    </script>
+</body>
+</html>
